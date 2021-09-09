@@ -6,9 +6,15 @@ import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
 
-new Vue({
+var mdt = new Vue({
   router,
   store,
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+
+document.onkeyup = function(data) {
+  if (data.code == "Escape") {
+    mdt.$children[0].closeMDT();
+  }
+};

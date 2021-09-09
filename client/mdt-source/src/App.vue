@@ -1,55 +1,119 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
+  <v-app v-show="display">
+    <v-container fluid style="padding:7%; max-height: 100vh" >
+      <v-system-bar
+        color="primary"
+        dark
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
-    <v-main>
-      <router-view/>
-    </v-main>
+        <v-spacer></v-spacer>
+        <v-icon v-if="duty" color="green">mdi-checkbox-blank-circle</v-icon>
+        <v-icon v-else color="red">mdi-checkbox-blank-circle</v-icon>
+        <span v-if="duty" class="pr-1">On Duty</span>
+        <span v-else class="pr-1">Off Duty</span>
+        <span class="pr-1">#{{identifier}}</span>
+        <span>{{time}}</span>
+      </v-system-bar>
+      <v-card tile class="overflow-y-auto" style="max-height: calc(100vh - 39%)">
+      <v-row :class="layout">
+        <v-col class="ma-0 pl-3 pr-10" cols="auto" style="background-color: #2a2a2a">
+          <NavBar style="position: fixed"/>
+        </v-col>
+        <v-col :class="layout">
+          <router-view style="background-color: #2a2a2a"/>
+        </v-col>
+      </v-row>
+      </v-card>
+    </v-container>
   </v-app>
 </template>
 
 <script>
-
+import Nui from "./utils/Nui";
+import NavBar from "./components/NavBar.vue";
+import { mapState, mapActions } from 'vuex'
 export default {
-  name: 'App',
+  name: "App",
+  components: {
+    NavBar,
+  },
 
   data: () => ({
-    //
+    layout: "pa-0 ma-0",
+    display: false,
   }),
+
+  methods: {
+    ...mapActions(["setMdtData"]),
+    closeMDT() {
+      Nui.send("close");
+      this.display = false;
+    },
+  },
+
+  computed: {
+    ...mapState(['identifier','duty']),
+    time(){
+      return new Date().toLocaleString('en-GB').substring(11,17)
+    },
+    
+  },
+
+  destroyed() {
+    window.removeEventListener("message", this.listener);
+  },
+
+  mounted() {
+    this.$vuetify.theme.themes.light = {
+      primary: "#0027e8",
+      secondary: "#383838",
+      accent: "#A7E8E8",
+      error: "#FF5252",
+      info: "#2196F3",
+      success: "#4CAF50",
+      warning: "#FFC107",
+      background: "#F5F5F5",
+      navBackground: "#EEEEEE",
+    };
+
+    document.onreadystatechange = () => {
+      if (document.readyState == "complete") {
+        window.addEventListener("message", (event) => {
+          var eld = event.data;
+
+          if (eld.open) {
+            this.display = true;
+            this.setMdtData(eld)
+          }
+          if (eld.close) {
+            this.display = false;
+          }
+        });
+      }
+    };
+  },
 };
 </script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap");
+.fugaz {
+  font-family: "Fugaz One";
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  background: rgba(33, 150, 243, 1);
+  -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(33, 150, 243, 1);
+}
+</style>
