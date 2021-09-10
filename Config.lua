@@ -1,8 +1,17 @@
 Config = {
     Command = 'n-mdt',
     CloseCommand = 'n-cmdt',
+    CallsignCommand = 'mdt-callsign',
     Jobs = {'police', 'ambulance', 'unemployed'},
     ImageChangeLink = 'https://i.imgur.com/',
+    PoliceVehicles = {
+        ["scpdvic"] = "Crown VIC",
+		["polchar"] = "Charger",
+		["police2"] = "Heat",
+        ["demon"] = "Demon",
+        ["bmwm5"] = "BMW M5",
+		["mclarenpd"] = "McLaren",
+    },
     
     Colors = {
         ['0'] = 'Metallic Black',

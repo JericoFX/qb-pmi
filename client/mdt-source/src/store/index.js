@@ -8,6 +8,8 @@ export default new Vuex.Store({
     officers: [],
     duty: false,
     identifier: '0',
+    citizenId: '',
+    pvehicles: [],
   },
   mutations: {
   },
@@ -17,7 +19,24 @@ export default new Vuex.Store({
       state.officers = Object.values(data.officers)
       state.duty = data.duty
       state.identifier = data.identifier
-    }
+      state.citizenId = data.citizenId
+      state.pvehicles = Object.values(data.pvehicles)
+    },
+    updateDuty({ state }, data) {
+      if(state.citizenId == data.citId){
+        state.duty = data.duty;
+      }
+      for (const officer of state.officers) {
+        if(officer.citizenid == data.citId){
+          officer.onDuty = data.duty
+          return
+        }
+      }
+    },
+    updatePvehicles({ state }, data) {
+      console.log(data)
+      state.pvehicles = Object.values(data.pvehicles)
+    },
   },
   modules: {
   }

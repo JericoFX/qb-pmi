@@ -1,27 +1,32 @@
 <template>
   <v-app v-show="display">
-    <v-container fluid style="padding:7%; max-height: 100vh" >
-      <v-system-bar
-        color="primary"
-        dark
-      >
+    <v-container fluid style="padding: 7%; max-height: 100vh">
+      <v-system-bar color="primary" dark>
         <v-spacer></v-spacer>
         <v-icon v-if="duty" color="green">mdi-checkbox-blank-circle</v-icon>
         <v-icon v-else color="red">mdi-checkbox-blank-circle</v-icon>
         <span v-if="duty" class="pr-1">On Duty</span>
         <span v-else class="pr-1">Off Duty</span>
-        <span class="pr-1">#{{identifier}}</span>
-        <span>{{time}}</span>
+        <span class="pr-1">#{{ identifier }}</span>
+        <span>{{ time }}</span>
       </v-system-bar>
-      <v-card tile class="overflow-y-auto" style="max-height: calc(100vh - 39%)">
-      <v-row :class="layout">
-        <v-col class="ma-0 pl-3 pr-10" cols="auto" style="background-color: #2a2a2a">
-          <NavBar style="position: fixed"/>
-        </v-col>
-        <v-col :class="layout">
-          <router-view style="background-color: #2a2a2a"/>
-        </v-col>
-      </v-row>
+      <v-card
+        tile
+        class="overflow-y-auto"
+        style="max-height: calc(100vh - 39%)"
+      >
+        <v-row :class="layout">
+          <v-col
+            class="ma-0 pl-3 pr-10"
+            cols="auto"
+            style="background-color: #2a2a2a"
+          >
+            <NavBar style="position: fixed" />
+          </v-col>
+          <v-col :class="layout">
+            <router-view style="background-color: #2a2a2a" />
+          </v-col>
+        </v-row>
       </v-card>
     </v-container>
   </v-app>
@@ -30,7 +35,7 @@
 <script>
 import Nui from "./utils/Nui";
 import NavBar from "./components/NavBar.vue";
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from "vuex";
 export default {
   name: "App",
   components: {
@@ -43,7 +48,7 @@ export default {
   }),
 
   methods: {
-    ...mapActions(["setMdtData"]),
+    ...mapActions(["setMdtData", "updateDuty", "updatePvehicles"]),
     closeMDT() {
       Nui.send("close");
       this.display = false;
@@ -51,11 +56,10 @@ export default {
   },
 
   computed: {
-    ...mapState(['identifier','duty']),
-    time(){
-      return new Date().toLocaleString('en-GB').substring(11,17)
+    ...mapState(["identifier", "duty"]),
+    time() {
+      return new Date().toLocaleString("en-GB").substring(11, 17);
     },
-    
   },
 
   destroyed() {
@@ -64,15 +68,13 @@ export default {
 
   mounted() {
     this.$vuetify.theme.themes.light = {
-      primary: "#0027e8",
-      secondary: "#383838",
-      accent: "#A7E8E8",
+      primary: "#1976D2",
+      secondary: "#424242",
+      accent: "#82B1FF",
       error: "#FF5252",
       info: "#2196F3",
       success: "#4CAF50",
       warning: "#FFC107",
-      background: "#F5F5F5",
-      navBackground: "#EEEEEE",
     };
 
     document.onreadystatechange = () => {
@@ -82,14 +84,25 @@ export default {
 
           if (eld.open) {
             this.display = true;
-            this.setMdtData(eld)
+            this.setMdtData(eld);
           }
           if (eld.close) {
             this.display = false;
           }
+          if(eld.type == "dutyUpdate"){
+            this.updateDuty(eld)
+          }
+          if(eld.type == "pvehiclesUpdate"){
+            this.updatePvehicles(eld)
+          }
+          
         });
       }
     };
+
+    if (process.env.NODE_ENV === "development") {
+      this.display = true;
+    }
   },
 };
 </script>

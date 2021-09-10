@@ -1,6 +1,37 @@
 local officers = {}
+local pvehicles = {}
 
-function startUp() end
+-- Commands
+RegisterCommand(Config.Command, function(source, args)
+    local src = source
+    local xPlayer = QBCore.Functions.GetPlayer(src)
+    for k, v in pairs(Config.Jobs) do
+        if xPlayer.PlayerData.job.name == v then
+            TriggerClientEvent('nag-mdt:open', src)
+        end
+    end
+end)
+
+RegisterCommand(Config.CloseCommand, function(source, args)
+    local src = source
+    local xPlayer = QBCore.Functions.GetPlayer(src)
+    for k, v in pairs(Config.Jobs) do
+        if xPlayer.PlayerData.job.name == v then
+            TriggerClientEvent('nag-mdt:close', src)
+        end
+    end
+end)
+
+RegisterCommand(Config.CallsignCommand, function(source, args)
+    local src = source
+    local xPlayer = QBCore.Functions.GetPlayer(src)
+    for k, v in pairs(Config.Jobs) do
+        if xPlayer.PlayerData.job.name == v then
+            xPlayer.Functions.SetMetaData("callsign", args[1])
+            updateCallsigns(xPlayer.PlayerData.citizenid, args[1])
+        end
+    end
+end)
 
 -- Stuff that can be done on resource start
 Citizen.CreateThread(function()
@@ -32,35 +63,83 @@ QBCore.Functions.CreateCallback('nag-mdt:server:getmdtdata', function(source, cb
     if xPlayer ~= nil then
         local mdtData = {
             officers = officers,
+            pvehicles = pvehicles,
             duty = xPlayer.PlayerData.job.onduty,
+            citizenId = xPlayer.PlayerData.citizenid,
         }
         cb(mdtData)
     end
 end)
 
-RegisterCommand(Config.Command, function(source, args)
+-- Events
+RegisterServerEvent('nag-mdt:server:updateDuty')
+AddEventHandler('nag-mdt:server:updateDuty', function()
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
-    for k, v in pairs(Config.Jobs) do
-        if xPlayer.PlayerData.job.name == v then
-            TriggerClientEvent('nag-mdt:open', src)
-        end
-    end
+    local citId = xPlayer.PlayerData.citizenid
+    local duty = xPlayer.PlayerData.job.onduty
+    updateDutyList(citId, duty)
+    TriggerClientEvent('police:client:setDuty', src, duty)
+    TriggerClientEvent('nag-mdt:setOfficerDuty', -1, citId, duty)
 end)
 
-RegisterCommand(Config.CloseCommand, function(source, args)
+RegisterServerEvent('nag-mdt:server:vehicleTakeout')
+AddEventHandler('nag-mdt:server:vehicleTakeout', function(plate, vehicleInfo)
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
-    for k, v in pairs(Config.Jobs) do
-        if xPlayer.PlayerData.job.name == v then
-            TriggerClientEvent('nag-mdt:close', src)
+    local citId = xPlayer.PlayerData.citizenid
+    local model = "UNKNOWN"
+    for k,v in pairs(Config.PoliceVehicles) do
+        if k == vehicleInfo then
+            model = v
+            break
         end
     end
+    local vehicle = {
+        plate = plate,
+        model = model,
+        ownerName = ( officers[citId].firstname .. " " .. officers[citId].lastname),
+        ownerCallSign = officers[citId].callsign,
+        occupants = {
+            citId
+        },
+    }
+    pvehicles[plate] = vehicle
+    TriggerClientEvent('nag-mdt:updatePvehicles', -1, pvehicles)
 end)
+
+RegisterServerEvent('nag-mdt:server:vehicleStore')
+AddEventHandler('nag-mdt:server:vehicleStore', function(plate)
+    pvehicles[plate] = nil
+    TriggerClientEvent('nag-mdt:updatePvehicles', -1, pvehicles)
+end)
+
+RegisterServerEvent('nag-mdt:server:toggleInVehicle')
+AddEventHandler('nag-mdt:server:toggleInVehicle', function(data)
+    local src = source
+    local xPlayer = QBCore.Functions.GetPlayer(src)
+    local citId = xPlayer.PlayerData.citizenid
+    if data.getIn then
+        table.insert(pvehicles[data.plate].occupants, citId)
+    else
+        for k, v in ipairs(pvehicles[data.plate].occupants) do
+            if v == citId then
+                table.remove(pvehicles[data.plate].occupants, k)
+            end
+        end
+    end
+    TriggerClientEvent('nag-mdt:updatePvehicles', -1, pvehicles)
+end)
+
+
+
 
 -- Functions
 function updateDutyList(citizenId, duty)
     officers[citizenId].onDuty = duty
+end
+function updateCallsigns(citizenId, cs)
+    officers[citizenId].callsign = cs
 end
 
 function dump(o)
