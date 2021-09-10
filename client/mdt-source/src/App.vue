@@ -34,6 +34,7 @@
 
 <script>
 import Nui from "./utils/Nui";
+import testData from "./utils/testData"
 import NavBar from "./components/NavBar.vue";
 import { mapState, mapActions } from "vuex";
 export default {
@@ -48,7 +49,7 @@ export default {
   }),
 
   methods: {
-    ...mapActions(["setMdtData", "updateDuty", "updatePvehicles"]),
+    ...mapActions(["setMdtData", "updateDuty", "updatePvehicles", "recordRequest"]),
     closeMDT() {
       Nui.send("close");
       this.display = false;
@@ -95,6 +96,9 @@ export default {
           if(eld.type == "pvehiclesUpdate"){
             this.updatePvehicles(eld)
           }
+          if(eld.type == "recordRequestResult"){
+            this.recordRequest(eld)
+          }
           
         });
       }
@@ -102,6 +106,7 @@ export default {
 
     if (process.env.NODE_ENV === "development") {
       this.display = true;
+      testData.populate();
     }
   },
 };

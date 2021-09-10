@@ -38,6 +38,14 @@ AddEventHandler('nag-mdt:updatePvehicles', function(pvehicles)
     })
 end)
 
+RegisterNetEvent('nag-mdt:returnGetRecord')
+AddEventHandler('nag-mdt:returnGetRecord', function(player)
+    SendNUIMessage({
+        type = "recordRequestResult",
+        player = player,
+    })
+end)
+
 RegisterNUICallback('close', function(data)
     SetNuiFocus(false, false)
 end)

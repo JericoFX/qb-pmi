@@ -33,6 +33,33 @@ RegisterCommand(Config.CallsignCommand, function(source, args)
     end
 end)
 
+RegisterCommand("mdt-records", function(source, args)
+    local src = source
+    local citizenId = args[1]
+    print(citizenId)
+    local resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+    local resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE char_id=@citizenid', {['@citizenid'] = citizenId})
+    for k,v in pairs(resultPlayer) do
+            if v.charinfo then
+                local playerData = json.decode(v.charinfo)
+                local gender = 'Male'
+                if playerData.gender ~= 0 then
+                    gender = 'Female'
+                end
+                local player = {
+                    char = playerData,
+                    name = playerData.firstname.. ' ' ..playerData.lastname,
+                    job = json.decode(v.job),
+                    gang = json.decode(v.gang),
+                    metadata = json.decode(v.metadata),
+                    gender = gender,
+                    record = resultRecord,
+                }
+                TriggerClientEvent('nag-mdt:returnGetRecord', src, player)
+            end
+    end
+end)
+
 -- Stuff that can be done on resource start
 Citizen.CreateThread(function()
     local query =
@@ -56,7 +83,7 @@ Citizen.CreateThread(function()
 end)
 
 -- Base MDT data
-QBCore.Functions.CreateCallback('nag-mdt:server:getmdtdata', function(source, cb) -- NEW EVENT
+QBCore.Functions.CreateCallback('nag-mdt:server:getmdtdata', function(source, cb)
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
     updateDutyList(xPlayer.PlayerData.citizenid, xPlayer.PlayerData.job.onduty)
@@ -131,6 +158,35 @@ AddEventHandler('nag-mdt:server:toggleInVehicle', function(data)
     TriggerClientEvent('nag-mdt:updatePvehicles', -1, pvehicles)
 end)
 
+RegisterServerEvent('nag-mdt:server:getRecord')
+AddEventHandler('nag-mdt:server:getRecord', function(data)
+    local src = source
+    local resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+    local resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+    for k,v in pairs(resultPlayer) do
+        for x, y in pairs(resultRecord) do
+            if v.charinfo then
+                local playerData = json.decode(v.charinfo)
+                local gender = 'm'
+                if playerData.gender ~= 0 then
+                    gender = 'f'
+                end
+                local player = {
+                    char = playerData,
+                    name = playerData.firstname.. ' ' ..playerData.lastname,
+                    job = json.decode(v.job),
+                    gang = json.decode(v.gang),
+                    metadata = json.decode(v.metadata),
+                    gender = gender,
+                    record = y,
+                }
+                TriggerClientEvent('nag-mdt:returnGetRecord', src, player)
+            end
+        end
+    end
+end)
+
+-- Callbacks
 
 
 

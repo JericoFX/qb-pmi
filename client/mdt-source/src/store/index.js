@@ -10,12 +10,12 @@ export default new Vuex.Store({
     identifier: '0',
     citizenId: '',
     pvehicles: [],
+    activePerson: {},
   },
   mutations: {
   },
   actions: {
     setMdtData({ state }, data) {
-      console.log(data)
       state.officers = Object.values(data.officers)
       state.duty = data.duty
       state.identifier = data.identifier
@@ -34,8 +34,11 @@ export default new Vuex.Store({
       }
     },
     updatePvehicles({ state }, data) {
-      console.log(data)
       state.pvehicles = Object.values(data.pvehicles)
+    },
+    recordRequest({ state }, data) {
+      console.log(data)
+      state.activePerson = data.activePerson
     },
   },
   modules: {
