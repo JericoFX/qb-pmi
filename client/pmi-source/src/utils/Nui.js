@@ -1,6 +1,6 @@
 export default {
     async send(event, data = {}) {
-      return await fetch(`http://nag-mdt/${event}`, {
+      return await fetch(`http://qb-pmi/${event}`, {
         method: 'post',
         headers: {
           'Content-type': 'application/json; charset=UTF-8',

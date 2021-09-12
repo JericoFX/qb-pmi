@@ -1,6 +1,6 @@
-RegisterNetEvent('nag-mdt:open')
-AddEventHandler('nag-mdt:open', function()
-    QBCore.Functions.TriggerCallback('nag-mdt:server:getmdtdata', function(mdtData)
+RegisterNetEvent('qb-pmi:open')
+AddEventHandler('qb-pmi:open', function()
+    QBCore.Functions.TriggerCallback('qb-pmi:server:getmdtdata', function(mdtData)
         SetNuiFocus(true, true)
         SendNUIMessage({
             officers = mdtData.officers,
@@ -13,16 +13,16 @@ AddEventHandler('nag-mdt:open', function()
     end)
 end)
 
-RegisterNetEvent('nag-mdt:close')
-AddEventHandler('nag-mdt:close', function()
+RegisterNetEvent('qb-pmi:close')
+AddEventHandler('qb-pmi:close', function()
     --SetNuiFocus(false, false)
     SendNUIMessage({
         close = true
     })
 end)
 
-RegisterNetEvent('nag-mdt:setOfficerDuty')
-AddEventHandler('nag-mdt:setOfficerDuty', function(citId, duty)
+RegisterNetEvent('qb-pmi:setOfficerDuty')
+AddEventHandler('qb-pmi:setOfficerDuty', function(citId, duty)
     SendNUIMessage({
         type = "dutyUpdate",
         citId = citId,
@@ -30,16 +30,16 @@ AddEventHandler('nag-mdt:setOfficerDuty', function(citId, duty)
     })
 end)
 
-RegisterNetEvent('nag-mdt:updatePvehicles')
-AddEventHandler('nag-mdt:updatePvehicles', function(pvehicles)
+RegisterNetEvent('qb-pmi:updatePvehicles')
+AddEventHandler('qb-pmi:updatePvehicles', function(pvehicles)
     SendNUIMessage({
         type = "pvehiclesUpdate",
         pvehicles = pvehicles,
     })
 end)
 
-RegisterNetEvent('nag-mdt:returnGetRecord')
-AddEventHandler('nag-mdt:returnGetRecord', function(player)
+RegisterNetEvent('qb-pmi:returnGetRecord')
+AddEventHandler('qb-pmi:returnGetRecord', function(player)
     SendNUIMessage({
         type = "recordRequestResult",
         player = player,
@@ -52,13 +52,13 @@ end)
 
 RegisterNUICallback('dutyToggle', function(data)
     TriggerServerEvent('QBCore:ToggleDuty')
-    TriggerServerEvent('nag-mdt:server:updateDuty')
+    TriggerServerEvent('qb-pmi:server:updateDuty')
 end)
 
 RegisterNUICallback('toggleInVehicle', function(data)
-    TriggerServerEvent('nag-mdt:server:toggleInVehicle', data)
+    TriggerServerEvent('qb-pmi:server:toggleInVehicle', data)
 end)
 
 RegisterNUICallback('storeVehicle', function(plate)
-    TriggerServerEvent('nag-mdt:server:vehicleStore', plate)
+    TriggerServerEvent('qb-pmi:server:vehicleStore', plate)
 end)

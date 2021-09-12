@@ -1,10 +1,10 @@
 Config = {
-    Command = 'n-mdt',
-    CloseCommand = 'n-cmdt',
-    CallsignCommand = 'mdt-callsign',
-    Jobs = {'police', 'ambulance', 'unemployed'},
-    ImageChangeLink = 'https://i.imgur.com/',
-    PoliceVehicles = {
+    Command = 'n-mdt', -- Command to open the mdt
+    CloseCommand = 'n-cmdt', -- Command to force close the mdt and set nuifocus to false (not needed but I like having a emergency close on NUI)
+    CallsignCommand = 'mdt-callsign', -- Command to set your callsign for the MDT
+    Jobs = {'police'}, -- Wich jobs have access
+    ImageChangeLink = 'https://i.imgur.com/', -- Only allow images where the url starts with this (Mainly because imgur just works)
+    PoliceVehicles = { -- Names of vehicles that the police can drive for in the duty vehicle list
         ["scpdvic"] = "Crown VIC",
 		["polchar"] = "Charger",
 		["police2"] = "Heat",
@@ -13,7 +13,7 @@ Config = {
 		["mclarenpd"] = "McLaren",
     },
     
-    Colors = {
+    Colors = { -- Car colors for neat text
         ['0'] = 'Metallic Black',
         ['1'] = 'Metallic Graphite Black',
         ['2'] = 'Metallic Black Steel',

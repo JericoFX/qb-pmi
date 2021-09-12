@@ -7,7 +7,7 @@ RegisterCommand(Config.Command, function(source, args)
     local xPlayer = QBCore.Functions.GetPlayer(src)
     for k, v in pairs(Config.Jobs) do
         if xPlayer.PlayerData.job.name == v then
-            TriggerClientEvent('nag-mdt:open', src)
+            TriggerClientEvent('qb-pmi:open', src)
         end
     end
 end)
@@ -17,7 +17,7 @@ RegisterCommand(Config.CloseCommand, function(source, args)
     local xPlayer = QBCore.Functions.GetPlayer(src)
     for k, v in pairs(Config.Jobs) do
         if xPlayer.PlayerData.job.name == v then
-            TriggerClientEvent('nag-mdt:close', src)
+            TriggerClientEvent('qb-pmi:close', src)
         end
     end
 end)
@@ -55,7 +55,7 @@ RegisterCommand("mdt-records", function(source, args)
                     gender = gender,
                     record = resultRecord,
                 }
-                TriggerClientEvent('nag-mdt:returnGetRecord', src, player)
+                TriggerClientEvent('qb-pmi:returnGetRecord', src, player)
             end
     end
 end)
@@ -83,7 +83,7 @@ Citizen.CreateThread(function()
 end)
 
 -- Base MDT data
-QBCore.Functions.CreateCallback('nag-mdt:server:getmdtdata', function(source, cb)
+QBCore.Functions.CreateCallback('qb-pmi:server:getmdtdata', function(source, cb)
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
     updateDutyList(xPlayer.PlayerData.citizenid, xPlayer.PlayerData.job.onduty)
@@ -99,19 +99,19 @@ QBCore.Functions.CreateCallback('nag-mdt:server:getmdtdata', function(source, cb
 end)
 
 -- Events
-RegisterServerEvent('nag-mdt:server:updateDuty')
-AddEventHandler('nag-mdt:server:updateDuty', function()
+RegisterServerEvent('qb-pmi:server:updateDuty')
+AddEventHandler('qb-pmi:server:updateDuty', function()
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
     local citId = xPlayer.PlayerData.citizenid
     local duty = xPlayer.PlayerData.job.onduty
     updateDutyList(citId, duty)
     TriggerClientEvent('police:client:setDuty', src, duty)
-    TriggerClientEvent('nag-mdt:setOfficerDuty', -1, citId, duty)
+    TriggerClientEvent('qb-pmi:setOfficerDuty', -1, citId, duty)
 end)
 
-RegisterServerEvent('nag-mdt:server:vehicleTakeout')
-AddEventHandler('nag-mdt:server:vehicleTakeout', function(plate, vehicleInfo)
+RegisterServerEvent('qb-pmi:server:vehicleTakeout')
+AddEventHandler('qb-pmi:server:vehicleTakeout', function(plate, vehicleInfo)
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
     local citId = xPlayer.PlayerData.citizenid
@@ -132,17 +132,17 @@ AddEventHandler('nag-mdt:server:vehicleTakeout', function(plate, vehicleInfo)
         },
     }
     pvehicles[plate] = vehicle
-    TriggerClientEvent('nag-mdt:updatePvehicles', -1, pvehicles)
+    TriggerClientEvent('qb-pmi:updatePvehicles', -1, pvehicles)
 end)
 
-RegisterServerEvent('nag-mdt:server:vehicleStore')
-AddEventHandler('nag-mdt:server:vehicleStore', function(plate)
+RegisterServerEvent('qb-pmi:server:vehicleStore')
+AddEventHandler('qb-pmi:server:vehicleStore', function(plate)
     pvehicles[plate] = nil
-    TriggerClientEvent('nag-mdt:updatePvehicles', -1, pvehicles)
+    TriggerClientEvent('qb-pmi:updatePvehicles', -1, pvehicles)
 end)
 
-RegisterServerEvent('nag-mdt:server:toggleInVehicle')
-AddEventHandler('nag-mdt:server:toggleInVehicle', function(data)
+RegisterServerEvent('qb-pmi:server:toggleInVehicle')
+AddEventHandler('qb-pmi:server:toggleInVehicle', function(data)
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
     local citId = xPlayer.PlayerData.citizenid
@@ -155,11 +155,11 @@ AddEventHandler('nag-mdt:server:toggleInVehicle', function(data)
             end
         end
     end
-    TriggerClientEvent('nag-mdt:updatePvehicles', -1, pvehicles)
+    TriggerClientEvent('qb-pmi:updatePvehicles', -1, pvehicles)
 end)
 
-RegisterServerEvent('nag-mdt:server:getRecord')
-AddEventHandler('nag-mdt:server:getRecord', function(data)
+RegisterServerEvent('qb-pmi:server:getRecord')
+AddEventHandler('qb-pmi:server:getRecord', function(data)
     local src = source
     local resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
     local resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
@@ -180,7 +180,7 @@ AddEventHandler('nag-mdt:server:getRecord', function(data)
                     gender = gender,
                     record = y,
                 }
-                TriggerClientEvent('nag-mdt:returnGetRecord', src, player)
+                TriggerClientEvent('qb-pmi:returnGetRecord', src, player)
             end
         end
     end
