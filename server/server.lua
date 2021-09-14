@@ -40,8 +40,8 @@ RegisterCommand("mdt-records", function(source, args)
     local resultPlayer
     local resultRecord
     if Config.enableOxmysql then
-        resultPlayer = exports.oxmysql:fetch('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
-        resultRecord = exports.oxmysql:fetch('SELECT * FROM player_mdt WHERE char_id=@citizenid', {['@citizenid'] = citizenId})
+        resultPlayer = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+        resultRecord = exports.oxmysql:fetchSync('SELECT * FROM player_mdt WHERE char_id=@citizenid', {['@citizenid'] = citizenId})
     else
         resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
         resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE char_id=@citizenid', {['@citizenid'] = citizenId})
@@ -72,7 +72,7 @@ Citizen.CreateThread(function()
     local query = "SELECT citizenid, charinfo, job, metadata FROM players WHERE job LIKE '%police%'"
     local result
     if Config.enableOxmysql then
-        result = exports.oxmysql:fetch(query)
+        result = exports.oxmysql:fetchSync(query, {})
     else
         result = exports.ghmattimysql:executeSync(query)
     end
@@ -174,8 +174,8 @@ AddEventHandler('qb-pmi:server:getRecord', function(data)
     local resultPlayer
     local resultRecord
     if Config.enableOxmysql then
-        resultPlayer = exports.oxmysql:fetch('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
-        resultRecord = exports.oxmysql:fetch('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+        resultPlayer = exports.oxmysql:fetchSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+        resultRecord = exports.oxmysql:fetchSync('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
     else
         resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
         resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
