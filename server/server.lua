@@ -37,8 +37,15 @@ RegisterCommand("mdt-records", function(source, args)
     local src = source
     local citizenId = args[1]
     print(citizenId)
-    local resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
-    local resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE char_id=@citizenid', {['@citizenid'] = citizenId})
+    local resultPlayer
+    local resultRecord
+    if Config.enableOxmysql then
+        resultPlayer = exports.oxmysql:fetch('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+        resultRecord = exports.oxmysql:fetch('SELECT * FROM player_mdt WHERE char_id=@citizenid', {['@citizenid'] = citizenId})
+    else
+        resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+        resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE char_id=@citizenid', {['@citizenid'] = citizenId})
+    end
     for k,v in pairs(resultPlayer) do
             if v.charinfo then
                 local playerData = json.decode(v.charinfo)
@@ -62,24 +69,27 @@ end)
 
 -- Stuff that can be done on resource start
 Citizen.CreateThread(function()
-    local query =
-        "SELECT citizenid, charinfo, job, metadata FROM players WHERE job LIKE '%police%'"
-    exports.ghmattimysql:execute(query, function(result)
-        for k, v in ipairs(result) do
-            local charinfo = json.decode(v.charinfo)
-            local job = json.decode(v.job)
-            local metadata = json.decode(v.metadata)
-            local officer = {
-                citizenid = v.citizenid,
-                firstname = charinfo.firstname,
-                lastname = charinfo.lastname,
-                phone = charinfo.phone,
-                onDuty = false,
-                callsign = metadata.callsign
-            }
-            officers[v.citizenid] = officer
-        end
-    end)
+    local query = "SELECT citizenid, charinfo, job, metadata FROM players WHERE job LIKE '%police%'"
+    local result
+    if Config.enableOxmysql then
+        result = exports.oxmysql:fetch(query)
+    else
+        result = exports.ghmattimysql:executeSync(query)
+    end
+    for k, v in ipairs(result) do
+        local charinfo = json.decode(v.charinfo)
+        local job = json.decode(v.job)
+        local metadata = json.decode(v.metadata)
+        local officer = {
+            citizenid = v.citizenid,
+            firstname = charinfo.firstname,
+            lastname = charinfo.lastname,
+            phone = charinfo.phone,
+            onDuty = false,
+            callsign = metadata.callsign
+        }
+        officers[v.citizenid] = officer
+    end
 end)
 
 -- Base MDT data
@@ -161,8 +171,15 @@ end)
 RegisterServerEvent('qb-pmi:server:getRecord')
 AddEventHandler('qb-pmi:server:getRecord', function(data)
     local src = source
-    local resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
-    local resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+    local resultPlayer
+    local resultRecord
+    if Config.enableOxmysql then
+        resultPlayer = exports.oxmysql:fetch('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+        resultRecord = exports.oxmysql:fetch('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+    else
+        resultPlayer = exports.ghmattimysql:executeSync('SELECT * FROM players WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+        resultRecord = exports.ghmattimysql:executeSync('SELECT * FROM player_mdt WHERE citizenid=@citizenid', {['@citizenid'] = citizenId})
+    end
     for k,v in pairs(resultPlayer) do
         for x, y in pairs(resultRecord) do
             if v.charinfo then

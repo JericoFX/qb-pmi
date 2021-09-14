@@ -3,6 +3,7 @@ Config = {
     CloseCommand = 'n-cmdt', -- Command to force close the mdt and set nuifocus to false (not needed but I like having a emergency close on NUI)
     CallsignCommand = 'mdt-callsign', -- Command to set your callsign for the MDT
     Jobs = {'police'}, -- Wich jobs have access
+    enableOxmysql = false, -- Use oxmysql instead of ghmattimysql
     ImageChangeLink = 'https://i.imgur.com/', -- Only allow images where the url starts with this (Mainly because imgur just works)
     PoliceVehicles = { -- Names of vehicles that the police can drive for in the duty vehicle list
         ["scpdvic"] = "Crown VIC",
