@@ -83,7 +83,7 @@
         </v-card>
       </v-col>
       <v-col md="4" class="pl-0 pr-0">
-        <v-card elevation="1" dark max-height="68vh" class="overflow-y-auto">
+        <v-card elevation="1" dark max-height="68vh" class="overflow-y-auto" v-if="activePerson.name">
           <v-card-title>
             {{ activePerson.name }}
           </v-card-title>
