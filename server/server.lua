@@ -86,7 +86,8 @@ Citizen.CreateThread(function()
             lastname = charinfo.lastname,
             phone = charinfo.phone,
             onDuty = false,
-            callsign = metadata.callsign
+            callsign = metadata.callsign,
+            radio = "Off",
         }
         officers[v.citizenid] = officer
     end
@@ -117,7 +118,7 @@ AddEventHandler('qb-pmi:server:updateDuty', function()
     local duty = xPlayer.PlayerData.job.onduty
     updateDutyList(citId, duty)
     TriggerClientEvent('police:client:setDuty', src, duty)
-    TriggerClientEvent('qb-pmi:setOfficerDuty', -1, citId, duty)
+    TriggerClientEvent('qb-pmi:updateOfficer', -1, citId, officers[citId])
 end)
 
 RegisterServerEvent('qb-pmi:server:vehicleTakeout')
@@ -201,6 +202,15 @@ AddEventHandler('qb-pmi:server:getRecord', function(data)
             end
         end
     end
+end)
+
+RegisterServerEvent('qb-pmi:server:setOfficerRadio')
+AddEventHandler('qb-pmi:server:setOfficerRadio', function(channel)
+    local src = source
+    local xPlayer = QBCore.Functions.GetPlayer(src)
+    local citId = xPlayer.PlayerData.citizenid
+    officers[citId].radio = channel
+    TriggerClientEvent('qb-pmi:updateOfficer', -1, citId, officers[citId])
 end)
 
 -- Callbacks

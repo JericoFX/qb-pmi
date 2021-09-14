@@ -87,6 +87,28 @@ for k, v in pairs(Config.Locations["vehicle"]) do
                 end
 ```
 
+### pma-voice/client/module/radio.lua
+You need to add a call to update the officers radio channel on the PMI
+```lua
+TriggerServerEvent('qb-pmi:server:setOfficerRadio', channel)
+```
+Add this in the ``setRadioChannel(channel)`` function like this:
+```lua
+function setRadioChannel(channel)
+	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
+	TriggerServerEvent('pma-voice:setPlayerRadio', channel)
+	TriggerServerEvent('qb-pmi:server:setOfficerRadio', channel)
+	plyState:set('radioChannel', channel, GetConvarInt('voice_syncData', 0) == 1)
+	radioChannel = channel
+	if GetConvarInt('voice_enableUi', 1) == 1 then
+		SendNUIMessage({
+			radioChannel = channel,
+			radioEnabled = radioEnabled
+		})
+	end
+end
+```
+
 ## Development Setup
 The source files for the UI are included in `client/pmi-source`, these can be used to change the PMI or add new things.
 

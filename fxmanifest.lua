@@ -20,8 +20,8 @@ client_scripts {
 
 files {
 	'client/html/img/*',
+	'client/html/css/app.css',
     'client/html/css/chunk-vendors.css',
-	'client/html/js/about.js',
 	'client/html/js/app.js',
 	'client/html/js/chunk-vendors.js',
 	'client/html/index.html',

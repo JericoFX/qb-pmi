@@ -49,7 +49,7 @@ export default {
   }),
 
   methods: {
-    ...mapActions(["setMdtData", "updateDuty", "updatePvehicles", "recordRequest"]),
+    ...mapActions(["setMdtData", "updateOfficer", "updatePvehicles", "recordRequest"]),
     closeMDT() {
       Nui.send("close");
       this.display = false;
@@ -90,8 +90,8 @@ export default {
           if (eld.close) {
             this.display = false;
           }
-          if(eld.type == "dutyUpdate"){
-            this.updateDuty(eld)
+          if(eld.type == "officerUpdate"){
+            this.updateOfficer(eld)
           }
           if(eld.type == "pvehiclesUpdate"){
             this.updatePvehicles(eld)

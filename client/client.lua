@@ -21,12 +21,12 @@ AddEventHandler('qb-pmi:close', function()
     })
 end)
 
-RegisterNetEvent('qb-pmi:setOfficerDuty')
-AddEventHandler('qb-pmi:setOfficerDuty', function(citId, duty)
+RegisterNetEvent('qb-pmi:updateOfficer')
+AddEventHandler('qb-pmi:updateOfficer', function(citId, officer)
     SendNUIMessage({
-        type = "dutyUpdate",
+        type = "officerUpdate",
         citId = citId,
-        duty = duty,
+        officer = officer,
     })
 end)
 

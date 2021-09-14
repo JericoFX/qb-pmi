@@ -115,7 +115,7 @@ export default {
         { text: "First Name", value: "firstname" },
         { text: "Last Name", value: "lastname" },
         { text: "Phone", value: "phone" },
-        { text: "ID", value: "citizenid" },
+        { text: "Radio", value: "radio" },
       ],
       pvehicleHeaders: [
         {

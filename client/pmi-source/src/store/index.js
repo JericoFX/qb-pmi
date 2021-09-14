@@ -22,13 +22,15 @@ export default new Vuex.Store({
       state.citizenId = data.citizenId
       state.pvehicles = Object.values(data.pvehicles)
     },
-    updateDuty({ state }, data) {
+    updateOfficer({ state }, data) {
       if(state.citizenId == data.citId){
-        state.duty = data.duty;
+        state.duty =  data.officer.onDuty;
       }
       for (const officer of state.officers) {
         if(officer.citizenid == data.citId){
-          officer.onDuty = data.duty
+          officer.onDuty =  data.officer.onDuty
+          officer.radio =  data.officer.radio
+          console.log(officer)
           return
         }
       }
