@@ -1,3 +1,5 @@
+# THIS IS NOT MY WORK, I FORKED IT AND THE ORIGINAL OWNER DELETE THE REPO OR MADE IT PRIVATE if you are the owner please contact me and i will take it down or give proper credits
+
 # Police Management Interface: qb-pmi [WIP]
 This PMI was built for the purpose of getting rid of all the other google sheets and discord channels we were using to keep track of police things. Not all features might make sense for your server.
 
